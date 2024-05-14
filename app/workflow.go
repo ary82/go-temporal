@@ -14,6 +14,7 @@ func GreetingWorkflow(ctx workflow.Context, name string) (string, error) {
 	options := workflow.ActivityOptions{
 		StartToCloseTimeout: time.Second * 5,
 		RetryPolicy: &temporal.RetryPolicy{
+			// Disable retries on activity fail
 			MaximumAttempts: 1,
 		},
 	}
@@ -21,13 +22,13 @@ func GreetingWorkflow(ctx workflow.Context, name string) (string, error) {
 	ctx = workflow.WithActivityOptions(ctx, options)
 
 	var result string
-	var err error
 
+	// Exec 10 Greeting Activities
 	for i := 0; i < 10; i++ {
-		err = workflow.ExecuteActivity(ctx, ComposeGreeting, name).Get(ctx, &result)
+		workflow.ExecuteActivity(ctx, ComposeGreeting, name).Get(ctx, &result)
 	}
 
-	return result, err
+	return result, nil
 }
 
 func ComposeGreeting(ctx context.Context, name string) (string, error) {

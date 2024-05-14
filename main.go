@@ -8,8 +8,6 @@ import (
 	"go.temporal.io/sdk/worker"
 )
 
-const GreetingTaskQueue = "GREETING_TASK_QUEUE"
-
 func main() {
 	// Create the client object just once per process
 	c, err := client.Dial(client.Options{})
@@ -19,7 +17,7 @@ func main() {
 	defer c.Close()
 
 	// This worker hosts both Workflow and Activity functions
-	w := worker.New(c, GreetingTaskQueue, worker.Options{})
+	w := worker.New(c, "GREETING_TASK_QUEUE", worker.Options{})
 	w.RegisterWorkflow(app.GreetingWorkflow)
 	w.RegisterActivity(app.ComposeGreeting)
 

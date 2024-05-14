@@ -9,8 +9,6 @@ import (
 	"go.temporal.io/sdk/client"
 )
 
-const GreetingTaskQueue = "GREETING_TASK_QUEUE"
-
 func main() {
 	// Create the client object just once per process
 	c, err := client.Dial(client.Options{})
@@ -20,10 +18,14 @@ func main() {
 	defer c.Close()
 
 	options := client.StartWorkflowOptions{
-		ID:                       "greeting-workflow",
-		TaskQueue:                GreetingTaskQueue,
-		CronSchedule:             "* * * * *",
-		WorkflowExecutionTimeout: 2 * time.Minute,
+		ID:        "greeting-workflow",
+		TaskQueue: "GREETING_TASK_QUEUE",
+
+		// Every minute
+		CronSchedule: "* * * * *",
+
+		// Expire after 3 minutes
+		WorkflowExecutionTimeout: 3 * time.Minute,
 	}
 
 	// Start the Workflow
